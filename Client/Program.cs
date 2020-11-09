@@ -15,16 +15,35 @@ namespace Client
         private static RestClient _client = new RestClient();
         static void Main(string[] args)
         {
-            RestRequest request = new RestRequest("https://localhost:44364/api/employees");
+            RestRequest request = new RestRequest("https://localhost:44364/api/employees") {Method=Method.GET };
             IRestResponse response = _client.Execute(request);
             JArray arr = JArray.Parse(response.Content);
-            Console.WriteLine(arr);
-            var emp = arr.ToObject<List<Employees>>();
-            Console.WriteLine(emp[0].ID);
+            Console.WriteLine("Employees in organisation:");
+            foreach(var a in arr)
+            {
+                Console.WriteLine("ID:"+a["ID"]+"name:"+a["EmployeeName"]);
+            }
 
-            request = new RestRequest("https://localhost:44364/api/employees");
+            request = new RestRequest("https://localhost:44364/api/employees") { Method=Method.GET};
             request.AddParameter("id", 2);
             response = _client.Execute(request);
+            arr = JArray.Parse(response.Content);
+            Console.WriteLine("Employee with ID:2");
+            Console.WriteLine("Name: "+arr[0]["EmployeeName"]);
+
+            request = new RestRequest("https://localhost:44364/api/employees") { Method = Method.DELETE };
+            request.AddParameter("id", 2);
+            response = _client.Execute(request);
+            request = new RestRequest("https://localhost:44364/api/employees") { Method = Method.GET };
+            response = _client.Execute(request);
+            arr = JArray.Parse(response.Content);
+            Console.WriteLine("Employees in organisation:");
+            foreach (var a in arr)
+            {
+                Console.WriteLine("ID:" + a["ID"] + "name:" + a["EmployeeName"]);
+            }
+
+
         }
     }
 }
